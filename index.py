@@ -27,9 +27,15 @@ def limpar_linhas(fig_usadas, height):
             if bloco.y < linha:
                 bloco.y += 1
 
+def scoreboard(tela, pontos):
+    text = fonte.render(f"Score: {pontos}", True, "white")
+    tela.blit(text, (500, 700))
+
+fonte= pygame.font.SysFont(None, size=36, bold=True)
+barra_lateral = 200
 width, height = 10, 20
 tam_celula = 45
-tela = pygame.display.set_mode((width * tam_celula, height * tam_celula))
+tela = pygame.display.set_mode(((width * tam_celula) + barra_lateral, height * tam_celula))
 fps = pygame.time.Clock()
 velocidade = pygame.USEREVENT + 1
 pygame.time.set_timer(velocidade, 500)
@@ -58,6 +64,7 @@ def nova_figura():
 figura = nova_figura()
 fig_usadas = []
 running = True
+pontos = 0
 
 while running:
     for event in pygame.event.get():
@@ -105,9 +112,8 @@ while running:
                 rotacionado = [pygame.Rect(-y + figura[0].x, x + figura[0].y, 1, 1) for x, y in modelo]
                 if all(0 <= bloco.x < width and 0 <= bloco.y < height and all(bloco.x != usado.x or bloco.y != usado.y for usado in fig_usadas) for bloco in rotacionado):
                     figura = rotacionado
-            
     tela.fill("black")
-    
+    scoreboard(tela, pontos)
     # Desenho da Grade
     for rect in grade:
         pygame.draw.rect(tela, (40, 40, 40), rect, 1)
@@ -121,6 +127,7 @@ while running:
     for bloco in fig_usadas:
         rect = pygame.Rect(bloco.x * tam_celula + 1, bloco.y * tam_celula + 1, tam_celula - 2, tam_celula - 2)
         pygame.draw.rect(tela, "gray", rect)
+
     limpar_linhas(fig_usadas, height)
     pygame.display.flip()
     fps.tick(60)
