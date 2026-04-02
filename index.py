@@ -3,6 +3,7 @@ import random
 
 pygame.init()
 pygame.display.set_caption("Tetris")
+
 def mover(figura, dx, dy, width, height, fig_usadas):
     for bloco in figura:
         novo_x = bloco.x + dx
@@ -14,7 +15,7 @@ def mover(figura, dx, dy, width, height, fig_usadas):
                 return False
     return True
 
-def limpar_linhas(fig_usadas, height):
+def limpar_linhas(fig_usadas, height, pontos, linhas_removidas = 0):
     linhas_completas = []
     for y in range(height):
         count = sum(1 for bloco in fig_usadas if bloco.y == y)
@@ -26,6 +27,15 @@ def limpar_linhas(fig_usadas, height):
         for bloco in fig_usadas:
             if bloco.y < linha:
                 bloco.y += 1
+
+    linhas_removidas = len(linhas_completas)
+    if linhas_removidas == 1:
+        pontos+=100
+        
+    elif linhas_removidas == 2:
+        pontos+=300    
+
+    return pontos
 
 def scoreboard(tela, pontos):
     text = fonte.render(f"Score: {pontos}", True, "white")
@@ -64,7 +74,7 @@ def nova_figura():
 figura = nova_figura()
 fig_usadas = []
 running = True
-pontos = 0
+pontos=0
 
 while running:
     for event in pygame.event.get():
@@ -80,6 +90,7 @@ while running:
                 # Salva blocos atuais nos usados
                 for bloco in figura:
                     fig_usadas.append(pygame.Rect(bloco.x, bloco.y, 1, 1))
+                pontos = limpar_linhas(fig_usadas, height, pontos)
                 
                 # Gera nova peça
                 figura = nova_figura()
@@ -128,8 +139,7 @@ while running:
         rect = pygame.Rect(bloco.x * tam_celula + 1, bloco.y * tam_celula + 1, tam_celula - 2, tam_celula - 2)
         pygame.draw.rect(tela, "gray", rect)
 
-    limpar_linhas(fig_usadas, height)
+    limpar_linhas(fig_usadas, height, pontos)
     pygame.display.flip()
     fps.tick(60)
-
 pygame.quit()
