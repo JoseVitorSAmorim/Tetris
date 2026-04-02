@@ -31,9 +31,12 @@ def limpar_linhas(fig_usadas, height, pontos, linhas_removidas = 0):
     linhas_removidas = len(linhas_completas)
     if linhas_removidas == 1:
         pontos+=100
-        
     elif linhas_removidas == 2:
-        pontos+=300    
+        pontos+=300
+    elif linhas_removidas == 3:
+        pontos+=500
+    elif linhas_removidas >= 4:
+        pontos+=800    
 
     return pontos
 
